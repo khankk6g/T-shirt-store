@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>UrbanWear | T-Shirt Store</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+}
+
+header {
+  background: #171717;
+  color: white;
+  padding: 22px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header p {
+  color: #ddd;
+}
+
+main {
+  max-width: 900px;
+  margin: auto;
+  padding: 18px;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 2px 10px #0001;
+}
+
+.shirt {
+  font-size: 75px;
+}
+
+button {
+  background: #171717;
+  color: white;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover {
+  background: #444;
+}
+
+.camera-box {
+  background: white;
+  padding: 20px;
+  margin-top: 25px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+video {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 12px;
+  background: #111;
+}
+
+.notice {
+  font-size: 14px;
+  color: #555;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>URBANWEAR</h1>
+  <p>Premium T-Shirts Collection</p>
+</header>
+
+<main>
+
+<h2>Our Collection</h2>
+
+<section class="products">
+
+  <div class="card">
+    <div class="shirt">👕</div>
+    <h3>Classic T-Shirt</h3>
+    <p>Rs. 1,299</p>
+    <button onclick="selectShirt('Classic T-Shirt')">
+      Select
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="shirt">👕</div>
+    <h3>Oversized T-Shirt</h3>
+    <p>Rs. 1,799</p>
+    <button onclick="selectShirt('Oversized T-Shirt')">
+      Select
+    </button>
+  </div>
+
+</section>
+
+<section class="camera-box">
+
+  <h2>Virtual Try-On Camera Demo</h2>
+
+  <p id="selected">
+    Select a T-shirt above.
+  </p>
+
+  <p class="notice">
+    Optional camera preview.
+    Your camera video stays on your device.
+    Nothing is recorded or uploaded.
+    This demo does not overlay clothing.
+  </p>
+
+  <button onclick="startCamera()">
+    Start Camera
+  </button>
+
+  <button onclick="stopCamera()">
+    Stop Camera
+  </button>
+
+  <p id="status">Camera is off.</p>
+
+  <video
+    id="camera"
+    autoplay
+    muted
+    playsinline>
+  </video>
+
+</section>
+
+</main>
+
+<footer>
+  © UrbanWear — Camera Security Demo
+</footer>
+
+<script>
+
+let stream = null;
+
+function selectShirt(name) {
+  document.getElementById("selected").textContent =
+    "Selected: " + name;
+}
+
+async function startCamera() {
+
+  const status = document.getElementById("status");
+
+  if (!navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia) {
+    status.textContent =
+      "Camera requires HTTPS or localhost.";
+    return;
+  }
+
+  try {
+
+    stopCamera();
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user" },
+      audio: false
+    });
+
+    document.getElementById("camera").srcObject =
+      stream;
+
+    status.textContent =
+      "Camera is on. Preview is local only.";
+
+  } catch (error) {
+
+    status.textContent =
+      "Camera unavailable or permission denied.";
+
+  }
+}
+
+function stopCamera() {
+
+  if (stream) {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+  }
+
+  document.getElementById("camera").srcObject = null;
+
+  document.getElementById("status").textContent =
+    "Camera is off.";
+}
+
+window.addEventListener("pagehide", stopCamera);
+
+</script>
+
+</body>
+</html>
